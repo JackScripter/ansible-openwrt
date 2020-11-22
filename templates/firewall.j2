@@ -12,10 +12,10 @@ config defaults
 config zone
     option name '{{ rule.name }}'
     option family '{{ rule.family | default('ipv4') }}'
-{% if rule.masquerade == True %}
+{% if rule.masquerade is defined and rule.masquerade == True %}
     option masq '1'
 {% endif %}
-{% if rule.mtu_fix == True %}
+{% if rule.mtu_fix is defined and rule.mtu_fix == True %}
     option mtu_fix '1'
 {% endif %}
     option network '{{ rule.network | default(' ') }}'
@@ -58,7 +58,9 @@ config rule
     list dest_ip '{{ ip }}'
 {% endfor %}
 {% endif %}
+{% if rule.dst_port is defined %}
     option dest_port '{{ rule.dst_port }}'
+{% endif %}
 {% for proto in rule.proto %}
     list proto '{{ proto }}'
 {% endfor %}
