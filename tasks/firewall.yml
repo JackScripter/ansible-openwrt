@@ -1,0 +1,11 @@
+---
+- name: Configuring firewall rules
+  template:
+    src: templates/firewall.j2
+    dest: /root/fw_test
+    #dest: /etc/config/firewall
+    owner: root
+    group: root
+    mode: '0600'
+  #notify: restart firewall
+

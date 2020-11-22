@@ -1,0 +1,90 @@
+config defaults
+{% if openwrt.firewall.defaults.syn_flood_protection == true %}
+    option syn_flood '1'
+{% endif %}
+    option input {{ openwrt.firewall.defaults.input | default('ACCEPT') }}
+    option output {{ openwrt.firewall.defaults.output | default('ACCEPT') }}
+    option forward {{ openwrt.firewall.defaults.forward | default('REJECT') }}
+#################################
+#       ZONES CONFIGURATION     #
+#################################
+{% for rule in openwrt.firewall.zone %}
+config zone
+    option name '{{ rule.name }}'
+    option family '{{ rule.family | default('ipv4') }}'
+{% if rule.masquerade is defined and rule.masquerade == True %}
+    option masq '1'
+{% endif %}
+{% if rule.mtu_fix is defined and rule.mtu_fix == True %}
+    option mtu_fix '1'
+{% endif %}
+    option network '{{ rule.network | default(' ') }}'
+{% if rule.subnets is defined %}
+{% for subnet in rule.subnets %}
+    list subnet '{{ subnet }}'
+    list masq_src '{{ subnet }}'
+{% endfor %}
+{% endif %}
+    option input '{{ rule.input }}'
+    option output '{{ rule.output }}'
+    option forward '{{ rule.forward }}'
+{% endfor %}
+
+#################################
+#       RULES CONFIGURATION     #
+#################################
+config rule
+    option name 'Allow-DHCP-Renew'
+    option src '{{ openwrt.wan_interface }}'
+    option proto 'udp'
+    option dest_port '68'
+    option target 'ACCEPT'
+    option family 'ipv4'
+config rule
+    option name 'Allow-IGMP'
+    option src '{{ openwrt.wan_interface }}'
+    option proto 'igmp'
+    option family 'ipv4'
+    option target 'ACCEPT'
+{% for rule in openwrt.firewall.rule %}
+config rule
+    option name '{{ rule.name }}'
+    option src '{{ rule.src_zone | default(openwrt.wan_interface) }}'
+{% if rule.dst_zone is defined %}
+    option dest '{{ rule.dst_zone }}'
+{% endif %}
+{% if rule.dst_ip is defined %}
+{% for ip in rule.dst_ip %}
+    list dest_ip '{{ ip }}'
+{% endfor %}
+{% endif %}
+{% if rule.dst_port is defined %}
+    option dest_port '{{ rule.dst_port }}'
+{% endif %}
+{% for proto in rule.proto %}
+    list proto '{{ proto }}'
+{% endfor %}
+    option target '{{ rule.action }}'
+{% endfor %}
+    
+#########################################
+#       PORT FORWARD CONFIGURATION      #
+#########################################
+{% for rule in openwrt.firewall.redirect %}
+config redirect
+    option name '{{ rule.name }}'
+    option src '{{ rule.src_zone | default(openwrt.wan_interface) }}'
+    option dest '{{ rule.dst_zone | default(openwrt.lan_interface) }}'
+{% if rule.src_ip is defined %}
+    option src_ip '{{ rule.src_ip }}'
+{% endif %}
+    option src_dport '{{ rule.original_dst_port }}'
+    option dest_ip '{{ rule.dst_ip }}'
+    option dest_port '{{ rule.dst_port }}'
+    option proto '{{ rule.proto }}'
+    option target 'DNAT'
+{% if rule.enabled is defined and rule.enabled == false %}
+    option enabled '0'
+{% endif %}
+{% endfor %}
+
