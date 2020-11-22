@@ -1,0 +1,3 @@
+openwrt:
+  wan_interface: wan
+  lan_interface: lan
