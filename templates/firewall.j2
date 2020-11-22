@@ -2,5 +2,17 @@
 config redirect
     option name '{{ rule.name }}'
     option src '{{ rule.src_zone }}'
+    option dest '{{ rule.dst_zone }}'
+{% if rule.src_ip is defined %}
+    option src_ip '{{ rule.src_ip }}'
+{% endif %}
+    option src_dport '{{ rule.original_dst_port }}'
+    option dest_ip '{{ rule.dst_ip }}'
+    option dest_port '{{ rule.dst_port }}'
+    option proto '{{ rule.proto }}'
+    option target 'DNAT'
+{% if rule.enabled is defined and rule.enabled == false %}
+    option enabled '0'
+{% endif %}
 {% endfor %}
 
