@@ -1,0 +1,9 @@
+---
+- name: restart firewall
+  block:
+    - name: Commit changes
+      shell: uci commit firewall
+    - name: Restart firewall
+      service:
+        name: firewall
+        state: restarted

@@ -1,0 +1,6 @@
+{% for rule in openwrt.firewall.redirect %}
+config redirect
+    option name '{{ rule.name }}'
+    option src '{{ rule.src_zone }}'
+{% endfor %}
+
