@@ -1,2 +1,4 @@
 - import_tasks: firewall.yml
   tags: firewall
+- import_tasks: fstab.yml
+  tags: fstab

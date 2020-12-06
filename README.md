@@ -42,3 +42,12 @@ Following variables are located under `openwrt.firewall.zone`
 | input                 | String        | Input action (ACCEPT/REJECT/DROP)     |
 | output                | String        | Output action (ACCEPT/REJECT/DROP)    |
 | forward               | String        | Forward action (ACCEPT/REJECT/DROP)   |
+
+### Mount (fstab)
+Following variables are located under `openwrt.system.mount`
+| Name                  | Type          | Description                           |
+| --------------------- |:-------------:| ------------------------------------- |
+| target                | String (key)  | Mountpoint for the drive              |
+| device                | String        | Source device (ex: /dev/sda1)         |
+| fs                    | String        | Filesystem type (ext4/xfs/...)        |
+| options               | String        | Options while mounting (seperate by commas) |
