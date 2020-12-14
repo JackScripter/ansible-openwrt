@@ -1,9 +1,0 @@
-- name: Configuring fstab
-  mount:
-    path: "{{ item.target }}"
-    src: "{{ item.device }}"
-    fstype: "{{ item.fs }}"
-    opts: "{{ item.options }}"
-    state: mounted
-  loop: "{{ openwrt.system.mount }}"
-

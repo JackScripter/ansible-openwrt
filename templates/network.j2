@@ -1,0 +1,64 @@
+{% if openwrt.network.ula_prefix is defined %}
+config globals 'globals'
+    option ula_prefix '{{ openwrt.network.ula_prefix }}'
+{% endif %}
+
+#################################
+#           INTERFACES          #
+#################################
+config interface 'loopback'
+    option ifname 'lo'
+    option proto 'static'
+    option ipaddr '127.0.0.1'
+    option netmask '255.0.0.0'
+
+{% for interface in openwrt.network.interface %}
+config interface '{{ interface.alias }}'
+{% if interface.name is defined %}
+    option ifname '{{ interface.name }}'
+{% endif %}
+    option proto '{{ interface.proto }}'
+{% if interface.proto == "static" %}
+    option ipaddr '{{ interface.ip }}'
+    option netmask '{{ interface.netmask }}'
+{% endif %}
+{% if interface.type is defined %}
+    option type '{{ interface.type }}'
+{% endif %}
+{% if interface.stp is defined and interface.stp == True %}
+    option stp '1'
+{% endif %}
+{% endfor %}
+
+#################################
+#         SWITCH & VLAN         #
+#################################
+config switch
+    option name '{{ openwrt.network.switch.name }}'
+    option reset '1'
+{% if openwrt.network.switch.enable_vlan == True %}
+    option enable_vlan '1'
+ {% endif %}
+
+{% if openwrt.network.switch.enable_vlan == True %}
+{% for vlan in openwrt.network.switch.vlan %}
+config switch_vlan
+    option device '{{ openwrt.network.switch.name }}'
+    option vlan '{{ vlan.id }}'
+    option vid '{{ vlan.id }}'
+    option ports '{{ vlan.ports }}'
+{% endfor %}
+{% endif %}
+
+{% if openwrt.network.route is defined %}
+#################################
+#         STATIC ROUTE          #
+#################################
+{% for route in openwrt.network.route %}
+config route
+    option target '{{ route.target }}'
+    option netmask '{{ route.netmask }}'
+    option gateway '{{ route.gateway }}'
+    option interface '{{ route.interface }}'
+{% endfor %}
+{% endif %}

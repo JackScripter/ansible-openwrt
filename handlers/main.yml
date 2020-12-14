@@ -7,3 +7,12 @@
       service:
         name: firewall
         state: restarted
+
+- name: restart network
+  block:
+    - name: Commit changes
+      shell: uci commit network
+    - name: Restart network
+      service:
+        name: network
+        state: restarted
