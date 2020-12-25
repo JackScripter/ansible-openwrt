@@ -51,14 +51,3 @@ config switch_vlan
 {% endif %}
 
 {% if openwrt.network.route is defined %}
-#################################
-#         STATIC ROUTE          #
-#################################
-{% for route in openwrt.network.route %}
-config route
-    option target '{{ route.target }}'
-    option netmask '{{ route.netmask }}'
-    option gateway '{{ route.gateway }}'
-    option interface '{{ route.interface }}'
-{% endfor %}
-{% endif %}

@@ -1,0 +1,12 @@
+---
+- name: Configuring network
+  template:
+    src: templates/network.j2
+    dest: /root/network
+    mode: '0600'
+    owner: root
+    group: root
+  notify: restart network
+
+- name: Adding new static routes
+  shell: "ip route add {{ item.target }}/{{ item.netmask }} via {{ item.gateway }}"

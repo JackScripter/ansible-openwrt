@@ -11,12 +11,5 @@
   loop: "{{ openwrt.system.mount }}"
   tags: fstab
 
-- name: Configuring network
-  template:
-    src: templates/network.j2
-    dest: /etc/config/network
-    mode: '0600'
-    owner: root
-    group: root
-  notify: restart network
+- import_tasks: network.yml
   tags: network
